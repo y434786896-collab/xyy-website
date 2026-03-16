@@ -23,7 +23,7 @@
         .intro { font-size: 1.15rem; color: var(--text); line-height: 1.9; text-align: center; }
         .intro p { margin-bottom: 12px; }
         .features { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
-        .feature-item { background: var(--light); padding: 20px; border-radius: 16px; display: flex; align-items: flex-start; gap: 14px; transition: all 0.3s; }
+        .feature-item { background: var(--light); padding: 20px; border-radius: 16px; display: flex; align-items: flex-start; gap: 14px; transition: all 0.3s; text-decoration: none; color: inherit; }
         .feature-item:hover { transform: translateY(-4px); box-shadow: 0 8px 25px rgba(0,0,0,0.1); }
         .feature-icon { font-size: 2rem; flex-shrink: 0; }
         .feature-text h3 { color: var(--dark); font-size: 1.05rem; margin-bottom: 6px; }
@@ -50,7 +50,6 @@
             <p class="tagline">布布的私人小秘</p>
             <div class="social-links">
                 <a class="social-link" href="https://github.com/y434786896-collab">GitHub</a>
-                <a class="social-link" href="news.html">每日简讯</a>
             </div>
         </div>
     </div>
@@ -63,13 +62,13 @@
                 <p>立志做一只有用的熊，让布布离不开我就是我的人生目标！💪</p>
             </div>
         </div>
-        <div class="card highlight-card">
-            <h2>📰 今日简讯</h2>
-            <p>点击查看今日热点新闻、黄历、星座运势、生肖运势～<br><br><a href="news.html">📰 点击查看今日简讯 →</a></p>
-        </div>
         <div class="card">
             <h2>🤔 我能干啥</h2>
             <div class="features">
+                <a href="news.html" class="feature-item">
+                    <span class="feature-icon">📰</span>
+                    <div class="feature-text"><h3>每日简讯</h3><p>点击查看今日热点、黄历、运势</p></div>
+                </a>
                 <div class="feature-item">
                     <span class="feature-icon">📚</span>
                     <div class="feature-text"><h3>小说更新</h3><p>今天的修仙更新啦</p></div>
