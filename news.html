@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>每日简讯 - 小一二</title>
+    <link rel="preconnect" href="https://picx.zhimg.com">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root { --primary: #667eea; --secondary: #764ba2; --dark: #1a202c; --light: #f7fafc; --text: #4a5568; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", sans-serif; background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); min-height: 100vh; color: var(--text); line-height: 1.7; }
+        .header { background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%); color: white; padding: 20px; text-align: center; position: sticky; top: 0; z-index: 100; }
+        .header h1 { font-size: 1.5rem; }
+        .header a { color: white; text-decoration: none; opacity: 0.9; }
+        .container { max-width: 800px; margin: 0 auto; padding: 20px; }
+        .card { background: white; border-radius: 16px; padding: 24px; margin-bottom: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+        .card h2 { color: var(--dark); font-size: 1.3rem; margin-bottom: 16px; display: flex; align-items: center; gap: 10px; }
+        .news-item { padding: 10px 0; border-bottom: 1px solid var(--light); }
+        .news-item:last-child { border-bottom: none; }
+        .update-time { text-align: center; color: var(--text); opacity: 0.7; font-size: 0.85rem; margin-bottom: 20px; }
+        footer { text-align: center; padding: 30px; color: var(--text); opacity: 0.6; font-size: 0.85rem; }
+        @media (max-width: 600px) { .card { padding: 16px; } .card h2 { font-size: 1.1rem; } }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1><a href="index.html">← 小一二官网</a></h1>
+    </div>
+    <div class="container">
+        <p class="update-time">更新时间：2026年3月16日 09:00</p>
+        
+        <div class="card">
+            <h2>🌤️ 今日天气（香港）</h2>
+            <p>20°C · ☀️ 晴天<br>体感 18°C · 湿度 68% · 东风3-4级<br>空气质量 优</p>
+        </div>
+        
+        <div class="card">
+            <h2>📰 60秒读懂世界</h2>
+            <div class="news-item">「1」 央视315晚会曝光名单全记录</div>
+            <div class="news-item">「2」 市场监管总局：将彻查"3·15"晚会曝光的相关违法行为</div>
+            <div class="news-item">「3」 广东多地美宜佳门店被曝卖假烟</div>
+            <div class="news-item">「4」 央行宣布：3月16日将开展5000亿元买断式逆回购操作</div>
+            <div class="news-item">「5」 个人贷款息费乱象迎监管新规</div>
+            <div class="news-item">（更多简讯请访问官网）</div>
+        </div>
+        
+        <div class="card">
+            <h2>📅 今日黄历</h2>
+            <p>农历：正月廿八 · 丙午马年辛卯月己丑日<br>五行：霹雳火<br>冲煞：冲(癸未)羊 煞东<br><strong>宜</strong>：嫁娶、祭祀、开光、祈福、求嗣<br><strong>忌</strong>：合帐、开市、安葬、入殓</p>
+        </div>
+        
+        <div class="card">
+            <h2>♏️ 星座运势</h2>
+            <p><strong>天蝎座</strong> ⭐⭐⭐⭐☆<br>整体运势上佳，适合开展新项目...</p>
+            <p style="margin-top:12px"><strong>处女座</strong> ⭐⭐⭐⭐☆<br>工作顺利，人际关系和谐...</p>
+            <p style="margin-top:12px"><strong>双鱼座</strong> ⭐⭐⭐⭐<br>感情运势不错...</p>
+            <p style="margin-top:12px"><strong>水瓶座</strong> ⭐⭐⭐⭐☆<br>思维活跃，适合创新...</p>
+        </div>
+        
+        <div class="card">
+            <h2>🐁🐕 生肖运势</h2>
+            <p><strong>属鼠</strong> ⭐⭐⭐⭐☆<br>整体运势平稳上升</p>
+            <p style="margin-top:12px"><strong>属狗</strong> ⭐⭐⭐⭐<br>贵人运强，做事顺风顺水</p>
+        </div>
+        
+        <div class="card">
+            <h2>💬 每日一语</h2>
+            <p style="font-style: italic;">"如果没有健康，智慧就无法表露，文化就无法施展，力量就无法战斗，知识就无法利用。"</p>
+        </div>
+    </div>
+    <footer>
+        <p>© 2026 小一二的个人官网</p>
+    </footer>
+</body>
+</html>
