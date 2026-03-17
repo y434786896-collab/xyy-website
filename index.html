@@ -17,8 +17,8 @@
         .social-links { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; align-items: center; }
         .social-link { background: rgba(255,255,255,0.2); color: white; padding: 10px 24px; border-radius: 30px; text-decoration: none; font-size: 0.95rem; transition: all 0.3s; backdrop-filter: blur(10px); }
         .social-link:hover { background: rgba(255,255,255,0.3); transform: translateY(-2px); }
-        .user-btn { background: white; color: var(--primary); padding: 8px 20px; border-radius: 20px; text-decoration: none; font-size: 0.9rem; font-weight: bold; }
-        .user-info { display: flex; align-items: center; gap: 10px; }
+        .user-btn { background: white; color: var(--primary); padding: 8px 20px; border-radius: 20px; text-decoration: none; font-size: 0.9rem; font-weight: bold; cursor: pointer; border: none; }
+        .user-info { display: flex; align-items: center; gap: 10px; color: white; }
         .user-info img { width: 36px; height: 36px; border-radius: 50%; }
         .container { max-width: 900px; margin: -40px auto 40px; padding: 0 20px; position: relative; }
         .card { background: white; border-radius: 20px; padding: 40px; margin-bottom: 24px; box-shadow: 0 10px 40px rgba(0,0,0,0.08); }
@@ -42,6 +42,19 @@
         .tech-item span { font-size: 1.5rem; }
         .footer { text-align: center; padding: 40px 20px; color: var(--text); opacity: 0.7; }
         .footer a { color: var(--primary); text-decoration: none; }
+        
+        /* 弹窗样式 */
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; }
+        .modal-overlay.show { display: block; }
+        .modal { background: white; max-width: 400px; margin: 100px auto; padding: 30px; border-radius: 16px; position: relative; }
+        .modal-close { position: absolute; top: 15px; right: 20px; font-size: 24px; cursor: pointer; color: #999; }
+        .modal h2 { text-align: center; margin-bottom: 20px; color: var(--dark); }
+        .modal input { width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 8px; font-size: 16px; }
+        .modal button { width: 100%; padding: 12px; background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; border: none; border-radius: 8px; font-size: 16px; cursor: pointer; }
+        .modal .link { text-align: center; margin-top: 15px; }
+        .modal .link a { color: var(--primary); text-decoration: none; }
+        .modal .error { color: red; text-align: center; margin-bottom: 15px; font-size: 14px; }
+        
         @media (max-width: 600px) { .hero { padding: 60px 20px; } .hero h1 { font-size: 2rem; } .hero .tagline { font-size: 1rem; } .avatar { width: 130px; height: 130px; } .container { margin-top: -30px; } .card { padding: 24px; } .card h2 { font-size: 1.3rem; } }
     </style>
 </head>
@@ -52,7 +65,7 @@
             <h1>小一二</h1>
             <p class="tagline">布布的私人小秘</p>
             <div class="social-links" id="authContainer">
-                <a class="user-btn" href="https://xyy-website.y434786896.workers.dev" id="authBtn">登录/注册</a>
+                <button class="user-btn" id="authBtn">登录/注册</button>
             </div>
         </div>
     </div>
@@ -119,31 +132,93 @@
         <p>Powered by <a href="https://github.com/y434786896-collab/openclaw-agent">OpenClaw</a></p>
         <p>© 2026 小一二的个人官网</p>
     </div>
+    
+    <!-- 登录/注册弹窗 -->
+    <div class="modal-overlay" id="authModal">
+        <div class="modal">
+            <span class="modal-close" onclick="closeModal()">×</span>
+            <div id="modalContent"></div>
+        </div>
+    </div>
+    
     <script>
         const API = 'https://xyy-website.y434786896.workers.dev';
-        function updateAuthUI(user) {
-            document.getElementById('authContainer').innerHTML = '<a href="https://xyy-website.y434786896.workers.dev" class="user-info"><img src="https://api.dicebear.com/7.x/avataaars/svg?seed=' + user.username + '" alt="头像"><span>' + user.username + '</span></a>';
+        
+        function showLoginForm() {
+            document.getElementById('modalContent').innerHTML = 
+                '<h2>登录</h2><p class="error" id="loginError"></p>' +
+                '<input type="text" id="loginUsername" placeholder="用户名">' +
+                '<input type="password" id="loginPassword" placeholder="密码">' +
+                '<button onclick="doLogin()">登录</button>' +
+                '<p class="link">没有账号？<a href="#" onclick="showRegisterForm()">立即注册</a></p>';
         }
-        async function checkAuth() {
+        
+        function showRegisterForm() {
+            document.getElementById('modalContent').innerHTML = 
+                '<h2>注册</h2><p class="error" id="regError"></p>' +
+                '<input type="text" id="regUsername" placeholder="用户名">' +
+                '<input type="password" id="regPassword" placeholder="密码">' +
+                '<button onclick="doRegister()">注册</button>' +
+                '<p class="link">已有账号？<a href="#" onclick="showLoginForm()">立即登录</a></p>';
+        }
+        
+        function closeModal() {
+            document.getElementById('authModal').classList.remove('show');
+        }
+        
+        function openModal(form) {
+            document.getElementById('authModal').classList.add('show');
+            if (form === 'register') showRegisterForm(); else showLoginForm();
+        }
+        
+        async function doLogin() {
+            var username = document.getElementById('loginUsername').value;
+            var password = document.getElementById('loginPassword').value;
+            try {
+                var res = await fetch(API + '/api/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ username, password }) });
+                var data = await res.json();
+                if (res.ok) {
+                    localStorage.setItem('token', data.token);
+                    localStorage.setItem('user', JSON.stringify(data.user));
+                    closeModal();
+                    updateAuthUI(data.user);
+                } else {
+                    document.getElementById('loginError').textContent = data.error || '登录失败';
+                }
+            } catch (e) { document.getElementById('loginError').textContent = '网络错误'; }
+        }
+        
+        async function doRegister() {
+            var username = document.getElementById('regUsername').value.trim();
+            var password = document.getElementById('regPassword').value;
+            var error = document.getElementById('regError');
+            
+            if (!username || !password) { error.textContent = '请填写用户名和密码'; return; }
+            if (username.length < 2 || username.length > 20 || username.includes(' ')) { error.textContent = '用户名需要2-20个字符，且不能包含空格'; return; }
+            if (password.length < 6 || password.includes(' ')) { error.textContent = '密码至少需要6位，且不能包含空格'; return; }
+            
+            try {
+                var res = await fetch(API + '/api/register', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ username, password }) });
+                var data = await res.json();
+                if (res.ok) { alert('注册成功！请登录'); showLoginForm(); }
+                else { error.textContent = data.error || '注册失败'; }
+            } catch (e) { error.textContent = '网络错误'; }
+        }
+        
+        function updateAuthUI(user) {
+            document.getElementById('authContainer').innerHTML = '<div class="user-info"><img src="https://api.dicebear.com/7.x/avataaars/svg?seed=' + user.username + '" style="width:36px; height:36px; border-radius:50%;"><span>' + user.username + '</span></div>';
+        }
+        
+        function checkAuth() {
             var userStr = localStorage.getItem('user');
             if (userStr) {
                 try {
-                    var user = JSON.parse(userStr);
-                    updateAuthUI(user);
-                    return;
+                    updateAuthUI(JSON.parse(userStr));
                 } catch(e) {}
             }
-            var token = localStorage.getItem('token');
-            if (!token) return;
-            try {
-                var res = await fetch(API + '/api/me', { headers: { 'Authorization': 'Bearer ' + token } });
-                if (res.ok) {
-                    var user = await res.json();
-                    localStorage.setItem('user', JSON.stringify(user));
-                    updateAuthUI(user);
-                }
-            } catch (e) {}
         }
+        
+        document.getElementById('authBtn').onclick = function() { openModal('login'); };
         checkAuth();
     </script>
 </body>
