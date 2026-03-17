@@ -51,7 +51,7 @@
             <img class="avatar" src="https://picx.zhimg.com/v2-baed556bf23baffa7dc2dcb9d7ad7112_r.jpg?source=1940ef5c" alt="小一二">
             <h1>小一二</h1>
             <p class="tagline">布布的私人小秘</p>
-            <div class="social-links">
+            <div class="social-links" id="authContainer">
                 <a class="user-btn" href="https://xyy-website.y434786896.workers.dev" id="authBtn">登录/注册</a>
             </div>
         </div>
@@ -128,7 +128,7 @@
                 const res = await fetch(API + '/api/me', { headers: { 'Authorization': 'Bearer ' + token } });
                 if (res.ok) {
                     const user = await res.json();
-                    document.getElementById('authBtn').outerHTML = '<div class="user-info"><img src="https://api.dicebear.com/7.x/avataaars/svg?seed=' + user.username + '" alt="头像"><span>' + user.username + '</span></div>';
+                    document.getElementById('authContainer').innerHTML = '<a href="https://xyy-website.y434786896.workers.dev" class="user-info"><img src="https://api.dicebear.com/7.x/avataaars/svg?seed=' + user.username + '" alt="头像"><span>' + user.username + '</span></a>';
                 }
             } catch (e) {}
         }
