@@ -121,14 +121,26 @@
     </div>
     <script>
         const API = 'https://xyy-website.y434786896.workers.dev';
+        function updateAuthUI(user) {
+            document.getElementById('authContainer').innerHTML = '<a href="https://xyy-website.y434786896.workers.dev" class="user-info"><img src="https://api.dicebear.com/7.x/avataaars/svg?seed=' + user.username + '" alt="头像"><span>' + user.username + '</span></a>';
+        }
         async function checkAuth() {
-            const token = localStorage.getItem('token');
+            var userStr = localStorage.getItem('user');
+            if (userStr) {
+                try {
+                    var user = JSON.parse(userStr);
+                    updateAuthUI(user);
+                    return;
+                } catch(e) {}
+            }
+            var token = localStorage.getItem('token');
             if (!token) return;
             try {
-                const res = await fetch(API + '/api/me', { headers: { 'Authorization': 'Bearer ' + token } });
+                var res = await fetch(API + '/api/me', { headers: { 'Authorization': 'Bearer ' + token } });
                 if (res.ok) {
-                    const user = await res.json();
-                    document.getElementById('authContainer').innerHTML = '<a href="https://xyy-website.y434786896.workers.dev" class="user-info"><img src="https://api.dicebear.com/7.x/avataaars/svg?seed=' + user.username + '" alt="头像"><span>' + user.username + '</span></a>';
+                    var user = await res.json();
+                    localStorage.setItem('user', JSON.stringify(user));
+                    updateAuthUI(user);
                 }
             } catch (e) {}
         }
