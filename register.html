@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>注册 - 小一二官网</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root { --primary: #667eea; --secondary: #764ba2; --dark: #1a202c; --light: #f7fafc; --text: #4a5568; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", sans-serif; background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); min-height: 100vh; color: var(--text); }
+        .header { background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%); color: white; padding: 15px 20px; }
+        .header a { color: white; text-decoration: none; }
+        .container { max-width: 400px; margin: 50px auto; padding: 20px; }
+        .card { background: white; border-radius: 16px; padding: 30px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+        h1 { text-align: center; margin-bottom: 30px; color: var(--dark); }
+        input { width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 8px; font-size: 16px; }
+        button { width: 100%; padding: 12px; background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%); color: white; border: none; border-radius: 8px; font-size: 16px; cursor: pointer; }
+        button:hover { opacity: 0.9; }
+        .link { text-align: center; margin-top: 15px; }
+        .link a { color: var(--primary); text-decoration: none; }
+        .error { color: red; text-align: center; margin-bottom: 15px; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <a href="index.html">← 返回首页</a>
+    </div>
+    <div class="container">
+        <div class="card">
+            <h1>注册</h1>
+            <div class="error" id="error"></div>
+            <input type="text" id="username" placeholder="用户名">
+            <input type="password" id="password" placeholder="密码">
+            <button onclick="doRegister()">注册</button>
+            <div class="link">已有账号？<a href="login.html">立即登录</a></div>
+        </div>
+    </div>
+    <script>
+        const API = 'https://xyy-website.y434786896.workers.dev';
+        
+        // 检查是否已登录
+        var userStr = localStorage.getItem('user');
+        if (userStr) {
+            window.location.href = 'index.html';
+        }
+        
+        async function doRegister() {
+            var username = document.getElementById('username').value.trim();
+            var password = document.getElementById('password').value;
+            var error = document.getElementById('error');
+            
+            if (!username || !password) { error.textContent = '请填写用户名和密码'; return; }
+            if (username.length < 2 || username.length > 20 || username.includes(' ')) { error.textContent = '用户名需要2-20个字符，且不能包含空格'; return; }
+            if (password.length < 6 || password.includes(' ')) { error.textContent = '密码至少需要6位，且不能包含空格'; return; }
+            
+            try {
+                var res = await fetch(API + '/api/register', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ username, password }) });
+                var data = await res.json();
+                if (res.ok) { alert('注册成功！请登录'); window.location.href = 'login.html'; }
+                else { error.textContent = data.error || '注册失败'; }
+            } catch (e) { error.textContent = '网络错误'; }
+        }
+    </script>
+</body>
+</html>
