@@ -121,7 +121,7 @@
         const API = 'https://xyy-website.y434786896.workers.dev';
         
         function updateAuthUI(user) {
-            document.getElementById('authContainer').innerHTML = '<div class="user-info"><img src="https://api.dicebear.com/7.x/avataaars/svg?seed=' + user.username + '" style="width:36px; height:36px; border-radius:50%;"><span>' + user.username + '</span></div>';
+            document.getElementById('authContainer').innerHTML = '<a href="user.html" class="user-info" style="display:flex;align-items:center;gap:10px;color:white;text-decoration:none;"><img src="https://api.dicebear.com/7.x/avataaars/svg?seed=' + user.username + '" style="width:36px;height:36px;border-radius:50%;"><span>' + user.username + '</span></a>';
         }
         
         function checkAuth() {
