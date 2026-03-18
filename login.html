@@ -15,7 +15,6 @@
         h1 { text-align: center; margin-bottom: 30px; color: var(--dark); }
         input { width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 8px; font-size: 16px; }
         button { width: 100%; padding: 12px; background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%); color: white; border: none; border-radius: 8px; font-size: 16px; cursor: pointer; }
-        button:hover { opacity: 0.9; }
         .link { text-align: center; margin-top: 15px; }
         .link a { color: var(--primary); text-decoration: none; }
         .error { color: red; text-align: center; margin-bottom: 15px; }
@@ -35,20 +34,14 @@
             <div class="link">没有账号？<a href="register.html">立即注册</a></div>
         </div>
     </div>
-
     <script>
-        // 检查是否已登录
+        const API = 'https://xyy-website.y434786896.workers.dev';
+        
         if (localStorage.getItem('user')) {
             window.location.href = 'index.html';
         }
         
-        // 模拟用户数据（临时方案）
-        const MOCK_USERS = [
-            { username: 'admin', password: 'admin123', avatar: '', created_at: '2024-01-01' },
-            { username: 'test', password: 'test123', avatar: '', created_at: '2024-01-15' }
-        ];
-        
-        function doLogin() {
+        async function doLogin() {
             const username = document.getElementById('username').value.trim();
             const password = document.getElementById('password').value;
             const errorEl = document.getElementById('error');
@@ -58,17 +51,23 @@
                 return;
             }
             
-            // 查找用户
-            const user = MOCK_USERS.find(u => u.username === username && u.password === password);
-            
-            if (user) {
-                // 登录成功
-                const token = btoa(JSON.stringify({ username: user.username }));
-                localStorage.setItem('token', token);
-                localStorage.setItem('user', JSON.stringify(user));
-                window.location.href = 'index.html';
-            } else {
-                errorEl.textContent = '用户名或密码错误';
+            try {
+                const res = await fetch(API + '/api/login', { 
+                    method: 'POST', 
+                    headers: { 'Content-Type': 'application/json' }, 
+                    body: JSON.stringify({ username, password }) 
+                });
+                const data = await res.json();
+                
+                if (res.ok) {
+                    localStorage.setItem('token', data.token);
+                    localStorage.setItem('user', JSON.stringify(data.user));
+                    window.location.href = 'index.html';
+                } else {
+                    errorEl.textContent = data.error || '登录失败';
+                }
+            } catch (e) {
+                errorEl.textContent = '网络错误: ' + e.message;
             }
         }
     </script>
