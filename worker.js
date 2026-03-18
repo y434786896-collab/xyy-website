@@ -126,12 +126,13 @@ export default {
       return new Response(null, {
         headers: { 
           'Access-Control-Allow-Origin': '*', 
-          'Access-Control-Allow-Methods': 'GET, POST, OPTIONS', 
+          'Access-Control-Allow-Methods': 'GET, POST, PUT, OPTIONS', 
           'Access-Control-Allow-Headers': 'Content-Type, Authorization' 
         }
       });
     }
 
+    // 注册
     if (path === '/api/register' && request.method === 'POST') {
       try {
         const { username, password } = await request.json();
@@ -160,6 +161,7 @@ export default {
       }
     }
 
+    // 登录
     if (path === '/api/login' && request.method === 'POST') {
       try {
         const { username, password } = await request.json();
@@ -174,6 +176,7 @@ export default {
       }
     }
 
+    // 获取当前用户信息
     if (path === '/api/me' && request.method === 'GET') {
       try {
         const auth = request.headers.get('Authorization');
@@ -187,6 +190,54 @@ export default {
           return new Response(JSON.stringify({ error: '用户不存在' }), { status: 404, headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' } });
         }
         return new Response(JSON.stringify(user), { headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' } });
+      } catch (e) {
+        return new Response(JSON.stringify({ error: e.message }), { status: 500, headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' } });
+      }
+    }
+
+    // 修改头像
+    if (path === '/api/user/avatar' && request.method === 'PUT') {
+      try {
+        const auth = request.headers.get('Authorization');
+        if (!auth) {
+          return new Response(JSON.stringify({ error: '未授权' }), { status: 401, headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' } });
+        }
+        const token = auth.replace('Bearer ', '');
+        const payload = JSON.parse(atob(token));
+        const { avatar } = await request.json();
+        await env.DB.prepare('UPDATE users SET avatar = ? WHERE id = ?').bind(avatar || null, payload.id).run();
+        return new Response(JSON.stringify({ message: '头像修改成功' }), { headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' } });
+      } catch (e) {
+        return new Response(JSON.stringify({ error: e.message }), { status: 500, headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' } });
+      }
+    }
+
+    // 修改密码
+    if (path === '/api/user/password' && request.method === 'PUT') {
+      try {
+        const auth = request.headers.get('Authorization');
+        if (!auth) {
+          return new Response(JSON.stringify({ error: '未授权' }), { status: 401, headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' } });
+        }
+        const token = auth.replace('Bearer ', '');
+        const payload = JSON.parse(atob(token));
+        const { oldPassword, newPassword } = await request.json();
+        
+        if (!oldPassword || !newPassword) {
+          return new Response(JSON.stringify({ error: '请填写当前密码和新密码' }), { status: 400, headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' } });
+        }
+        
+        if (newPassword.length < 6) {
+          return new Response(JSON.stringify({ error: '新密码至少需要6位' }), { status: 400, headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' } });
+        }
+        
+        const user = await env.DB.prepare('SELECT password FROM users WHERE id = ?').bind(payload.id).first();
+        if (!user || user.password !== oldPassword) {
+          return new Response(JSON.stringify({ error: '当前密码错误' }), { status: 400, headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' } });
+        }
+        
+        await env.DB.prepare('UPDATE users SET password = ? WHERE id = ?').bind(newPassword, payload.id).run();
+        return new Response(JSON.stringify({ message: '密码修改成功' }), { headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' } });
       } catch (e) {
         return new Response(JSON.stringify({ error: e.message }), { status: 500, headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' } });
       }
