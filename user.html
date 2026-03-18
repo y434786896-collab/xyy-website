@@ -92,21 +92,33 @@
 
         async function checkAuth() {
             const token = localStorage.getItem('token');
-            if (!token) {
+            const userStr = localStorage.getItem('user');
+            
+            // 先尝试从 localStorage 获取用户信息
+            if (!token || !userStr) {
                 window.location.href = 'login.html';
                 return;
             }
+            
             try {
-                const res = await fetch(API + '/api/me', { headers: { 'Authorization': 'Bearer ' + token } });
-                if (res.ok) {
-                    currentUser = await res.json();
-                    showUserInfo();
-                } else {
-                    localStorage.removeItem('token');
-                    window.location.href = 'login.html';
+                const user = JSON.parse(userStr);
+                currentUser = user;
+                showUserInfo();
+                
+                // 再异步验证 token 是否有效
+                try {
+                    const res = await fetch(API + '/api/me', { headers: { 'Authorization': 'Bearer ' + token } });
+                    if (res.ok) {
+                        currentUser = await res.json();
+                        showUserInfo();
+                    }
+                } catch(e) {
+                    // API 失败但 localStorage 有用户信息，继续显示
+                    console.log('API验证失败，使用缓存用户信息');
                 }
             } catch (e) {
-                alert('网络错误');
+                localStorage.removeItem('token');
+                localStorage.removeItem('user');
                 window.location.href = 'login.html';
             }
         }
